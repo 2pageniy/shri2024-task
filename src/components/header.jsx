@@ -32,3 +32,5 @@ export function Header() {
         </ul>
     </header>;
 }
+
+export default Header;

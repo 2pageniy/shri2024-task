@@ -188,3 +188,5 @@ export function Main() {
         </section>
     </main>;
 }
+
+export default Main;
