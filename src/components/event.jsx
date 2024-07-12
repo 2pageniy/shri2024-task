@@ -7,10 +7,12 @@ export function Event(props) {
     const { onSize } = props;
 
     useEffect(() => {
-        const width = ref.current.offsetWidth;
-        const height = ref.current.offsetHeight;
-        if (onSize) {
-            onSize({ width, height });
+        if (ref.current) {
+            const width = ref.current.offsetWidth;
+            const height = ref.current.offsetHeight;
+            if (onSize && width && height) {
+                onSize({ width, height });
+            }
         }
     }, [ref.current, onSize]);
 
