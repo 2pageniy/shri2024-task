@@ -1,4 +1,7 @@
-function Header() {
+console.log(1234);
+window.onload = function () {
+    console.log(12367);
+    function Header() {
     let [expanded, setExpanded] = React.useState(false);
     let [toggled, setToggled] = React.useState(false);
 
@@ -354,7 +357,7 @@ function Main() {
     </main>;
 }
 
-setTimeout(() => {
+    console.log(123);
     const root = ReactDOM.createRoot(document.getElementById('app'));
     root.render(
         <>
@@ -362,4 +365,5 @@ setTimeout(() => {
             <Main />
         </>
     );
-}, 100);
+};
+console.log('end');
