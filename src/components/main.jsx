@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useMemo, useCallback, useEffect, useRef, useState} from 'react';
 import {TABS, TABS_KEYS} from "./const.js";
 import {Event} from "./event.jsx";
-import {useCallback, useEffect, useRef, useState} from "react";
 
 export function Main() {
     const ref = useRef();
@@ -14,7 +13,7 @@ export function Main() {
             initedRef.current = true;
             setActiveTab(new URLSearchParams(location.search).get('tab') || 'all');
         }
-    }, [activeTab, initedRef.current]);
+    }, [initedRef.current]);
 
     const onSelectInput = useCallback(event => {
         setActiveTab(event.target.value);
@@ -44,7 +43,7 @@ export function Main() {
         }
     };
 
-    return <main className="main">
+    const mainGeneral = useMemo(() => (
         <section className="section main__general">
             <h2 className="section__title section__title-header section__main-title">Главное</h2>
             <div className="hero-dashboard">
@@ -96,7 +95,8 @@ export function Main() {
                 </ul>
             </div>
         </section>
-
+    ), []);
+    const mainScripts = useMemo(() => (
         <section className="section main__scripts">
             <h2 className="section__title section__title-header">Избранные сценарии</h2>
 
@@ -134,21 +134,26 @@ export function Main() {
                 />
             </ul>
         </section>
+    ), []);
+    const sectionSelect = useMemo(() => (
+        <select className="section__select" defaultValue="all" onInput={onSelectInput}>
+            {TABS_KEYS.map(key =>
+                <option key={key} value={key}>
+                    {TABS[key].title}
+                </option>
+            )}
+        </select>
+    ), []);
 
+    return <main className="main">
+        {mainGeneral}
+        {mainScripts}
         <section className="section main__devices">
             <div className="section__title">
                 <h2 className="section__title-header">
                     Избранные устройства
                 </h2>
-
-                <select className="section__select" defaultValue="all" onInput={onSelectInput}>
-                    {TABS_KEYS.map(key =>
-                        <option key={key} value={key}>
-                            {TABS[key].title}
-                        </option>
-                    )}
-                </select>
-
+                {sectionSelect}
                 <ul role="tablist" className="section__tabs">
                     {TABS_KEYS.map(key =>
                         <li
@@ -161,7 +166,7 @@ export function Main() {
                             aria-controls={`panel_${key}`}
                             onClick={() => setActiveTab(key)}
                         >
-                            {TABS[key].title}
+                        {TABS[key].title}
                         </li>
                     )}
                 </ul>
@@ -169,7 +174,11 @@ export function Main() {
 
             <div className="section__panel-wrapper" ref={ref}>
                 {TABS_KEYS.map(key =>
-                    <div key={key} role="tabpanel" className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')} aria-hidden={key === activeTab ? 'false' : 'true'} id={`panel_${key}`} aria-labelledby={`tab_${key}`}>
+                    <div role="tabpanel"
+                         key={key}
+                         className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')}
+                         aria-hidden={key === activeTab ? 'false' : 'true'} id={`panel_${key}`}
+                         aria-labelledby={`tab_${key}`}>
                         <ul className="section__panel-list">
                             {TABS[key].items.map((item, index) =>
                                 <Event
