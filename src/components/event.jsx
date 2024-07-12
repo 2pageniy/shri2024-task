@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {useEffect, useRef} from "react";
 
-export function Event(props) {
+export const Event = memo((props) => {
     const ref = useRef();
-
     const { onSize } = props;
 
     useEffect(() => {
@@ -25,4 +24,4 @@ export function Event(props) {
             }
         </button>
     </li>;
-}
+})
