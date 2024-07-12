@@ -1,16 +1,16 @@
-import React from "react";
+import React, {useCallback} from "react";
 
 export function Header() {
     let [expanded, setExpanded] = React.useState(false);
     let [toggled, setToggled] = React.useState(false);
 
-    const onClick = () => {
+    const onClick = useCallback(() => {
         if (!toggled) {
             setToggled(true);
         }
 
         setExpanded(!expanded);
-    };
+    }, [expanded, toggled]);
 
     return <header className="header">
         <a href="/" className="header__logo" aria-label="Яндекс.Дом"></a>
