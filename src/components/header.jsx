@@ -1,8 +1,9 @@
-import React, {useCallback} from "react";
+import React from 'react';
+import {useCallback, useState} from "react";
 
 export function Header() {
-    let [expanded, setExpanded] = React.useState(false);
-    let [toggled, setToggled] = React.useState(false);
+    let [expanded, setExpanded] = useState(false);
+    let [toggled, setToggled] = useState(false);
 
     const onClick = useCallback(() => {
         if (!toggled) {

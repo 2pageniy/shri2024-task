@@ -1,30 +1,31 @@
-import React from "react";
+import React from 'react';
 import {TABS, TABS_KEYS} from "./const.js";
 import {Event} from "./event.jsx";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 export function Main() {
-    const ref = React.useRef();
-    const initedRef = React.useRef(false);
-    const [activeTab, setActiveTab] = React.useState('');
-    const [hasRightScroll, setHasRightScroll] = React.useState(false);
+    const ref = useRef();
+    const initedRef = useRef(false);
+    const [activeTab, setActiveTab] = useState('');
+    const [hasRightScroll, setHasRightScroll] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!activeTab && !initedRef.current) {
             initedRef.current = true;
             setActiveTab(new URLSearchParams(location.search).get('tab') || 'all');
         }
     }, [activeTab, initedRef.current]);
 
-    const onSelectInput = React.useCallback(event => {
+    const onSelectInput = useCallback(event => {
         setActiveTab(event.target.value);
     }, []);
 
-    const sizes = React.useRef([]);
-    const onSize = React.useCallback(size => {
+    const sizes = useRef([]);
+    const onSize = useCallback(size => {
         sizes.current = [...sizes.current, size];
     }, [sizes.current]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const sumWidth = sizes.current.reduce((acc, item) => acc + item.width, 0);
 
         const newHasRightScroll = sumWidth > ref.current.offsetWidth;
