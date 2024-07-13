@@ -1,102 +1,72 @@
-import React, {useMemo, useCallback, useEffect, useRef, useState} from 'react';
+import {useMemo, useCallback, useEffect, useRef, useState, memo} from 'react';
 import {TABS, TABS_KEYS} from "./const.js";
 import {Event} from "./event.jsx";
 
-export function Main() {
-    const ref = useRef();
-    const initedRef = useRef(false);
-    const [activeTab, setActiveTab] = useState('');
-    const [hasRightScroll, setHasRightScroll] = useState(false);
+const sizeWidth = {
+    all: 102400,
+    kitchen: 469,
+    hall: 400,
+    lights: 823,
+    cameras: 200,
+}
 
-    useEffect(() => {
-        if (!activeTab && !initedRef.current) {
-            initedRef.current = true;
-            setActiveTab(new URLSearchParams(location.search).get('tab') || 'all');
-        }
-    }, [initedRef.current]);
+const MainGeneral = memo(() => {
+  return (
+      <section className="section main__general">
+          <h2 className="section__title section__title-header section__main-title">Главное</h2>
+          <div className="hero-dashboard">
+              <div className="hero-dashboard__primary">
+                  <h3 className="hero-dashboard__title">Привет, Геннадий!</h3>
+                  <p className="hero-dashboard__subtitle">Двери и окна закрыты, сигнализация включена.</p>
+                  <ul className="hero-dashboard__info">
+                      <li className="hero-dashboard__item">
+                          <div className="hero-dashboard__item-title">Дома</div>
+                          <div className="hero-dashboard__item-details">
+                              +23
+                              <span className="a11y-hidden">°</span>
+                          </div>
+                      </li>
+                      <li className="hero-dashboard__item">
+                          <div className="hero-dashboard__item-title">За окном</div>
+                          <div className="hero-dashboard__item-details">
+                              +19
+                              <span className="a11y-hidden">°</span>
 
-    const onSelectInput = useCallback(event => {
-        setActiveTab(event.target.value);
-    }, []);
-
-    const sizes = useRef([]);
-    const onSize = useCallback(size => {
-        sizes.current = [...sizes.current, size];
-    }, [sizes.current]);
-
-    useEffect(() => {
-        const sumWidth = sizes.current.reduce((acc, item) => acc + item.width, 0);
-
-        const newHasRightScroll = sumWidth > ref.current.offsetWidth;
-        if (newHasRightScroll !== hasRightScroll) {
-            setHasRightScroll(newHasRightScroll);
-        }
-    });
-
-    const onArrowCLick = () => {
-        const scroller = ref.current.querySelector('.section__panel:not(.section__panel_hidden)');
-        if (scroller) {
-            scroller.scrollTo({
-                left: scroller.scrollLeft + 400,
-                behavior: 'smooth'
-            });
-        }
-    };
-
-    const mainGeneral = useMemo(() => (
-        <section className="section main__general">
-            <h2 className="section__title section__title-header section__main-title">Главное</h2>
-            <div className="hero-dashboard">
-                <div className="hero-dashboard__primary">
-                    <h3 className="hero-dashboard__title">Привет, Геннадий!</h3>
-                    <p className="hero-dashboard__subtitle">Двери и окна закрыты, сигнализация включена.</p>
-                    <ul className="hero-dashboard__info">
-                        <li className="hero-dashboard__item">
-                            <div className="hero-dashboard__item-title">Дома</div>
-                            <div className="hero-dashboard__item-details">
-                                +23
-                                <span className="a11y-hidden">°</span>
-                            </div>
-                        </li>
-                        <li className="hero-dashboard__item">
-                            <div className="hero-dashboard__item-title">За окном</div>
-                            <div className="hero-dashboard__item-details">
-                                +19
-                                <span className="a11y-hidden">°</span>
-
-                                <div
-                                    className="hero-dashboard__icon hero-dashboard__icon_rain"
-                                    role="img"
-                                    aria-label="Дождь"
-                                ></div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <ul className="hero-dashboard__schedule">
-                    <Event
-                        icon="temp"
-                        iconLabel="Температура"
-                        title="Philips Cooler"
-                        subtitle="Начнет охлаждать в 16:30"
-                    />
-                    <Event
-                        icon="light"
-                        iconLabel="Освещение"
-                        title="Xiaomi Yeelight LED Smart Bulb"
-                        subtitle="Включится в 17:00"
-                    />
-                    <Event
-                        icon="light"
-                        iconLabel="Освещение"
-                        title="Xiaomi Yeelight LED Smart Bulb"
-                        subtitle="Включится в 17:00"
-                    />
-                </ul>
-            </div>
-        </section>
-    ), []);
-    const mainScripts = useMemo(() => (
+                              <div
+                                  className="hero-dashboard__icon hero-dashboard__icon_rain"
+                                  role="img"
+                                  aria-label="Дождь"
+                              ></div>
+                          </div>
+                      </li>
+                  </ul>
+              </div>
+              <ul className="hero-dashboard__schedule">
+                  <Event
+                      icon="temp"
+                      iconLabel="Температура"
+                      title="Philips Cooler"
+                      subtitle="Начнет охлаждать в 16:30"
+                  />
+                  <Event
+                      icon="light"
+                      iconLabel="Освещение"
+                      title="Xiaomi Yeelight LED Smart Bulb"
+                      subtitle="Включится в 17:00"
+                  />
+                  <Event
+                      icon="light"
+                      iconLabel="Освещение"
+                      title="Xiaomi Yeelight LED Smart Bulb"
+                      subtitle="Включится в 17:00"
+                  />
+              </ul>
+          </div>
+      </section>
+  );
+});
+const MainScripts = memo(() => {
+    return (
         <section className="section main__scripts">
             <h2 className="section__title section__title-header">Избранные сценарии</h2>
 
@@ -134,8 +104,10 @@ export function Main() {
                 />
             </ul>
         </section>
-    ), []);
-    const sectionSelect = useMemo(() => (
+    );
+});
+const SectionSelect = memo(({onSelectInput}) => {
+    return (
         <select className="section__select" defaultValue="all" onInput={onSelectInput}>
             {TABS_KEYS.map(key =>
                 <option key={key} value={key}>
@@ -143,31 +115,96 @@ export function Main() {
                 </option>
             )}
         </select>
-    ), []);
+    );
+});
+const SectionTab = memo(({id, isActiveTab, setActiveTab}) => {
+    return (
+        <li
+            role="tab"
+            aria-selected={isActiveTab ? 'true' : 'false'}
+            tabIndex={isActiveTab ? '0' : undefined}
+            className={'section__tab' + (isActiveTab ? ' section__tab_active' : '')}
+            id={`tab_${id}`}
+            aria-controls={`panel_${id}`}
+            onClick={() => setActiveTab(id)}
+        >
+            {TABS[id].title}
+        </li>
+    );
+});
+const TabPanelItem = memo(({id}) => {
+    return (
+        <div
+            role="tabpanel"
+            key={id}
+            className={'section__panel'}
+            aria-hidden={'false'} id={`panel_${id}`}
+            aria-labelledby={`tab_${id}`}
+        >
+            <ul className="section__panel-list">
+                {TABS[id].items.map((item, index) =>
+                    <Event
+                        key={index}
+                        {...item}
+                    />
+                )}
+            </ul>
+        </div>
+    );
+});
 
-    return <main className="main">
-        {mainGeneral}
-        {mainScripts}
+const MainDevices = () => {
+    const ref = useRef();
+    const initedRef = useRef(false);
+    const [activeTab, setActiveTab] = useState('');
+    const [hasRightScroll, setHasRightScroll] = useState(false);
+    const onSelectInput = useCallback(event => {
+        setActiveTab(event.target.value);
+    }, []);
+
+    useEffect(() => {
+        if (!activeTab && !initedRef.current) {
+            initedRef.current = true;
+            setActiveTab(new URLSearchParams(location.search).get('tab') || 'all');
+        }
+    }, [initedRef.current]);
+
+    useEffect(() => {
+        const sumWidth = sizeWidth[activeTab];
+
+        const newHasRightScroll = sumWidth > ref.current.offsetWidth;
+        if (newHasRightScroll !== hasRightScroll) {
+            setHasRightScroll(newHasRightScroll);
+        }
+    }, [activeTab]);
+
+    const onArrowCLick = () => {
+        const scroller = ref.current.querySelector('.section__panel:not(.section__panel_hidden)');
+        if (scroller) {
+            scroller.scrollTo({
+                left: scroller.scrollLeft + 400,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    return (
         <section className="section main__devices">
             <div className="section__title">
                 <h2 className="section__title-header">
                     Избранные устройства
                 </h2>
-                {sectionSelect}
+                <SectionSelect
+                    onSelectInput={onSelectInput}
+                />
                 <ul role="tablist" className="section__tabs">
                     {TABS_KEYS.map(key =>
-                        <li
+                        <SectionTab
                             key={key}
-                            role="tab"
-                            aria-selected={key === activeTab ? 'true' : 'false'}
-                            tabIndex={key === activeTab ? '0' : undefined}
-                            className={'section__tab' + (key === activeTab ? ' section__tab_active' : '')}
-                            id={`tab_${key}`}
-                            aria-controls={`panel_${key}`}
-                            onClick={() => setActiveTab(key)}
-                        >
-                        {TABS[key].title}
-                        </li>
+                            isActiveTab={key === activeTab}
+                            setActiveTab={setActiveTab}
+                            id={key}
+                        />
                     )}
                 </ul>
             </div>
@@ -178,21 +215,10 @@ export function Main() {
                             return null;
                         }
                         return (
-                            <div role="tabpanel"
-                                 key={key}
-                                 className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')}
-                                 aria-hidden={key === activeTab ? 'false' : 'true'} id={`panel_${key}`}
-                                 aria-labelledby={`tab_${key}`}>
-                                <ul className="section__panel-list">
-                                    {TABS[key].items.map((item, index) =>
-                                        <Event
-                                            key={index}
-                                            {...item}
-                                            onSize={onSize}
-                                        />
-                                    )}
-                                </ul>
-                            </div>
+                            <TabPanelItem
+                                key={key}
+                                id={key}
+                            />
                         )
                     }
                 )}
@@ -201,6 +227,14 @@ export function Main() {
                 }
             </div>
         </section>
+    );
+};
+
+export function Main() {
+    return <main className="main">
+        <MainGeneral/>
+        <MainScripts/>
+        <MainDevices />
     </main>;
 }
 
